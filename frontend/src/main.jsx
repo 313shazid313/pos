@@ -40,6 +40,7 @@ import CustomerForm from "./admin/admin-component/additionals-component/customer
 import CustomerUpdate from "./admin/admin-component/additionals-component/customer/CustomerUpdate.jsx";
 import SellTable from "./admin/admin-component/additionals-component/sell/SellTable.jsx";
 import SellForm from "./admin/admin-component/additionals-component/sell/SellForm.jsx";
+import VatForm from "./admin/admin-component/additionals-component/vat/VatForm.jsx";
 
 const router = createBrowserRouter([
   //! admin route
@@ -182,6 +183,11 @@ const router = createBrowserRouter([
       {
         path: "sell-table/sell-form",
         element: <SellForm />,
+      },
+
+      {
+        path: "vat-form",
+        element: <VatForm />,
       },
       {
         path: "*",

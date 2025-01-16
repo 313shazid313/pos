@@ -57,6 +57,12 @@ const {
   getSingleCustomer,
 } = require("../controller/additionals-controller/customer-controller");
 
+const {
+  vatCreate,
+  vatRead,
+  vatUpdate,
+} = require("../controller/additionals-controller/vat-controller");
+
 additionalsRoute.route("/create-review").post(reviewCreate);
 additionalsRoute.route("/read-reviews").get(reviewRead);
 additionalsRoute.route("/update-review/:id").put(reviewUpdate);
@@ -96,5 +102,9 @@ additionalsRoute.route("/create-customer").post(customerCreate);
 additionalsRoute.route("/read-customers").get(customerRead);
 additionalsRoute.route("/update-customer/:id").put(customerUpdate);
 additionalsRoute.route("/single-customer/:id").get(getSingleCustomer);
+
+additionalsRoute.route("/create-vat").post(vatCreate);
+additionalsRoute.route("/read-vats").get(vatRead);
+additionalsRoute.route("/update-vat/:id").put(vatUpdate);
 
 module.exports = additionalsRoute;

@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import { useGetAllUnitQuery } from "../../../../../redux/product-additional-state/unitApi";
-import Loading from "../../../../../component/Loading";
-import Error404 from "../../../../../component/RouteDoesNotExist";
+import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/paymentTypeApi";
+import Loading from "../../../../component/Loading";
+import Error404 from "../../../../component/RouteDoesNotExist";
 
 //icons
 import { FaEdit } from "react-icons/fa";
 
-const UnitTable = () => {
-  const { data, isError, isLoading } = useGetAllUnitQuery();
+const PaymentTable = () => {
+  const { data, isError, isLoading } = useGetAllPaymentTypeQuery();
   // const [deleteaBrand] = useDeleteaBrandMutation();
   let serial = 0;
 
@@ -24,7 +24,7 @@ const UnitTable = () => {
         </div>
         <div className="">
           <Link
-            to="unit-form"
+            to="payment-form"
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800"
           >
             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
@@ -72,4 +72,4 @@ const UnitTable = () => {
   );
 };
 
-export default UnitTable;
+export default PaymentTable;

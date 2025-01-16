@@ -4,21 +4,24 @@ import { useEffect, useState } from "react";
 import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockApi.js";
 import { useGetAllvatsQuery } from "../../../../redux/additionals-state/vatApi.js";
 import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/customerApi.js";
+import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/paymentTypeApi.js";
 
 const SellForm = () => {
   const [items, setItems] = useState({
     invoiceNo: Date.now(),
+    reference: "",
+    date: "",
   });
   const { data: productData } = useGetAllProductsQuery();
   const { data: stockData } = useGetAllStocksQuery();
   const { data: vatData } = useGetAllvatsQuery();
   const { data: customerData } = useGetAllCustomersQuery();
-
+  const { data: paymentTypeData } = useGetAllPaymentTypeQuery();
 
   // console.log(vatData);
   // console.log(stockData);
-  console.log(customerData);
-
+  // console.log(customerData);
+  console.log(paymentTypeData);
 
   const [tableData, setTableData] = useState([]);
 
@@ -181,43 +184,77 @@ const SellForm = () => {
           </table>
 
           <div className="space-y-12">
-            <div className="">
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm/6 font-medium text-gray-900"
-                  >
-                    Name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="name"
-                      name="name"
-                      value={items.name}
-                      onChange={handleInputChange}
-                      type="text"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm/6"
-                    />
-                  </div>
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="first-name"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
+                  Name
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="name"
+                    name="name"
+                    value={items.name}
+                    onChange={handleInputChange}
+                    type="text"
+                    autoComplete="given-name"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm/6"
+                  />
                 </div>
+              </div>
 
-                <div className="sm:col-span-3">
-                  <label className="block text-sm/6 font-medium text-gray-900">
-                    Invoice No.
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      name="invoiceNo"
-                      type="number"
-                      value={items.invoiceNo}
-                      disabled
-                      onChange={handleInputChange}
-                      autoComplete="family-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600-600 sm:text-sm/6"
-                    />
-                  </div>
+              <div className="sm:col-span-3">
+                <label className="block text-sm/6 font-medium text-gray-900">
+                  Invoice No.
+                </label>
+                <div className="mt-2">
+                  <input
+                    name="invoiceNo"
+                    type="number"
+                    value={items.invoiceNo}
+                    disabled
+                    onChange={handleInputChange}
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600-600 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-12">
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label className="block text-sm/6 font-medium text-gray-900">
+                  Date *
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="date"
+                    name="date"
+                    type="date"
+                    value={items.date}
+                    onChange={handleInputChange}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm/6 font-medium text-gray-900">
+                  Reference No.
+                </label>
+                <div className="mt-2">
+                  <input
+                    name="reference"
+                    type="text"
+                    value={items.reference}
+                    onChange={handleInputChange}
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600-600 sm:text-sm/6"
+                  />
                 </div>
               </div>
             </div>

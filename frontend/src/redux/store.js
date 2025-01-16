@@ -14,6 +14,7 @@ import damageApi from "./additionals-state/damageApi";
 import customerApi from "./additionals-state/customerApi";
 import cartReducer from "./feature/sellCart";
 import vatApi from "./additionals-state/vatApi";
+import paymentTypeApi from "./additionals-state/paymentTypeApi";
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
     [damageApi.reducerPath]: damageApi.reducer,
     [customerApi.reducerPath]: customerApi.reducer,
     [vatApi.reducerPath]: vatApi.reducer,
+    [paymentTypeApi.reducerPath]: paymentTypeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -47,7 +49,8 @@ export const store = configureStore({
       supplierApi.middleware,
       damageApi.middleware,
       customerApi.middleware,
-      vatApi.middleware
+      vatApi.middleware,
+      paymentTypeApi.middleware,
     ),
 });
 

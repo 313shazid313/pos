@@ -63,6 +63,14 @@ const {
   vatUpdate,
 } = require("../controller/additionals-controller/vat-controller");
 
+
+const {
+  paymentTypeCreate,
+  paymentTypeRead,
+  paymentTypeUpdate,
+  getSinglePaymentType,
+} = require("../controller/additionals-controller/payment-type-controller")
+
 additionalsRoute.route("/create-review").post(reviewCreate);
 additionalsRoute.route("/read-reviews").get(reviewRead);
 additionalsRoute.route("/update-review/:id").put(reviewUpdate);
@@ -106,5 +114,10 @@ additionalsRoute.route("/single-customer/:id").get(getSingleCustomer);
 additionalsRoute.route("/create-vat").post(vatCreate);
 additionalsRoute.route("/read-vats").get(vatRead);
 additionalsRoute.route("/update-vat/:id").put(vatUpdate);
+
+additionalsRoute.route("/create-paymenttype").post(paymentTypeCreate);
+additionalsRoute.route("/read-paymenttype").get(paymentTypeRead);
+additionalsRoute.route("/update-paymenttype/:id").put(paymentTypeUpdate);
+additionalsRoute.route("/single-paymenttype/:id").get(getSinglePaymentType);
 
 module.exports = additionalsRoute;

@@ -6,7 +6,6 @@ const customerCreate = async (req, res) => {
     await customerSchema.create({ name, phone, email, address });
     return res.status(200).json({ message: "message sent successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };

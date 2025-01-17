@@ -8,9 +8,11 @@ import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/p
 
 const SellForm = () => {
   const [items, setItems] = useState({
+    customerName: "",
     invoiceNo: Date.now(),
     reference: "",
     date: "",
+    paymentType: null,
   });
   const { data: productData } = useGetAllProductsQuery();
   const { data: stockData } = useGetAllStocksQuery();
@@ -21,17 +23,19 @@ const SellForm = () => {
   // console.log(vatData);
   // console.log(stockData);
   // console.log(customerData);
-  console.log(paymentTypeData);
+  // console.log(paymentTypeData);
 
   const [tableData, setTableData] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setItems({
-      ...items,
+    setItems((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
+
+
 
   const handleSelectChange = (selectedOption) => {
     // Check if the product is already in the table to avoid duplicates
@@ -194,12 +198,11 @@ const SellForm = () => {
                 </label>
                 <div className="mt-2">
                   <input
-                    id="name"
-                    name="name"
-                    value={items.name}
+                    id="customerName"
+                    name="customerName"
+                    value={items.customerName}
                     onChange={handleInputChange}
                     type="text"
-                    autoComplete="given-name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm/6"
                   />
                 </div>
@@ -255,6 +258,30 @@ const SellForm = () => {
                     autoComplete="family-name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600-600 sm:text-sm/6"
                   />
+                </div>
+              </div>
+              <div className="sm:col-span-3">
+                <label className="block text-sm/6 font-medium text-gray-900">
+                  Product Payment Type
+                </label>
+                <div className="mt-2">
+                  <select
+                    required
+                    name="paymentType"
+                    value={items.paymentType || ""}
+                    onChange={handleInputChange}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600-600 sm:text-sm/6"
+                  >
+                    <option value="" disabled>
+                      -----Select Payment Type-----
+                    </option>
+                    {paymentTypeData &&
+                      paymentTypeData?.map((Item) => (
+                        <option key={Item?._id} value={Item?._id}>
+                          {Item?.name}
+                        </option>
+                      ))}
+                  </select>
                 </div>
               </div>
             </div>

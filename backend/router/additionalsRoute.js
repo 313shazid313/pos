@@ -63,13 +63,22 @@ const {
   vatUpdate,
 } = require("../controller/additionals-controller/vat-controller");
 
-
 const {
   paymentTypeCreate,
   paymentTypeRead,
   paymentTypeUpdate,
   getSinglePaymentType,
-} = require("../controller/additionals-controller/payment-type-controller")
+} = require("../controller/additionals-controller/payment-type-controller");
+
+const {
+  createCoupon,
+  getAllCoupons,
+  getCouponById,
+  updateCoupon,
+  deleteCoupon,
+  applyCoupon,
+} = require("../controller/additionals-controller/coupon-controller");
+
 
 additionalsRoute.route("/create-review").post(reviewCreate);
 additionalsRoute.route("/read-reviews").get(reviewRead);
@@ -119,5 +128,13 @@ additionalsRoute.route("/create-paymenttype").post(paymentTypeCreate);
 additionalsRoute.route("/read-paymenttype").get(paymentTypeRead);
 additionalsRoute.route("/update-paymenttype/:id").put(paymentTypeUpdate);
 additionalsRoute.route("/single-paymenttype/:id").get(getSinglePaymentType);
+
+
+additionalsRoute.route("/create-coupon").post(createCoupon);
+additionalsRoute.route("/read-coupons").get(getAllCoupons);
+additionalsRoute.route("/single-coupon/:id").get(getCouponById);
+additionalsRoute.route("/update-coupon/:id").put(updateCoupon);
+additionalsRoute.route("/delete-coupon/:id").delete(deleteCoupon);
+additionalsRoute.route("/apply-coupon/:couponCode").post(applyCoupon);
 
 module.exports = additionalsRoute;

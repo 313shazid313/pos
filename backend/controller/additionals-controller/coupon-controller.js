@@ -1,6 +1,5 @@
-const Coupon = require("../models/Coupon"); // Adjust path as per your project structure
+const Coupon = require("../../model/additionals-model/couponModel"); // Adjust path as per your project structure
 
-// Create a new coupon
 const createCoupon = async (req, res) => {
   try {
     const { code, discount, expiryDate, usageLimit } = req.body;
@@ -21,7 +20,6 @@ const createCoupon = async (req, res) => {
   }
 };
 
-// Get all coupons
 const getAllCoupons = async (req, res) => {
   try {
     const coupons = await Coupon.find();
@@ -33,7 +31,6 @@ const getAllCoupons = async (req, res) => {
   }
 };
 
-// Get a single coupon by ID
 const getCouponById = async (req, res) => {
   try {
     const coupon = await Coupon.findById(req.params.id);
@@ -48,7 +45,6 @@ const getCouponById = async (req, res) => {
   }
 };
 
-// Update a coupon
 const updateCoupon = async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,7 +66,6 @@ const updateCoupon = async (req, res) => {
   }
 };
 
-// Delete a coupon
 const deleteCoupon = async (req, res) => {
   try {
     const { id } = req.params;
@@ -89,7 +84,6 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
-// Apply a coupon (validate and check usage)
 const applyCoupon = async (req, res) => {
   try {
     const { code } = req.body;

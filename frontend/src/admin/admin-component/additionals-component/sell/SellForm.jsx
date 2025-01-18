@@ -15,7 +15,9 @@ const SellForm = () => {
     reference: "",
     date: "",
     paymentType: null,
+    discount: "",
   });
+
   const { data: productData } = useGetAllProductsQuery();
   const { data: stockData } = useGetAllStocksQuery();
   const { data: vatData } = useGetAllvatsQuery();
@@ -26,13 +28,14 @@ const SellForm = () => {
   // console.log(stockData);
   // console.log(customerData);
   // console.log(paymentTypeData);
-
+  // console.log(productData);
   const [tableData, setTableData] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setItems((prev) => ({
       ...prev,
+      ...tableData,
       [name]: value,
     }));
   };
@@ -43,13 +46,12 @@ const SellForm = () => {
       return;
 
     const vatAmount = selectedOption.price * (vatData[0]?.vatAmount / 100);
-    const quantity = 1;
+    let quantity = 1;
     const price = selectedOption.price;
 
     setTableData([
       ...tableData,
       {
-        productNameId: selectedOption.value,
         name: selectedOption.label,
         price,
         quantity,
@@ -61,6 +63,13 @@ const SellForm = () => {
   };
 
   console.log(tableData);
+
+  const totalPriceSum = tableData.reduce(
+    (acc, item) => acc + item.totalPrice,
+    0
+  );
+  console.log(totalPriceSum);
+
   const handleQuantityChange = (productNameId, increment) => {
     setTableData((prevTableData) =>
       prevTableData.map((item) =>
@@ -90,7 +99,7 @@ const SellForm = () => {
   ];
 
   const optionsArrayCustomer = [
-    { label: "Select a Product", value: "", isDisabled: true },
+    { label: "Select a Customer", value: "", isDisabled: true },
     ...(customerData?.map((item) => ({
       label: item.name,
       value: item._id,
@@ -98,11 +107,16 @@ const SellForm = () => {
     })) || []),
   ];
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(items);
+  };
+
   return (
     <div className>
       <p className="text-2xl font-bold mb-6 text-center">Add New Sale</p>
       <div className="mt-6">
-        <form className="max-w-4xl mx-auto">
+        <form className="max-w-4xl mx-auto " onSubmit={handleSubmit}>
           <div className="space-y-12">
             <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -112,7 +126,7 @@ const SellForm = () => {
                 <Select
                   options={optionsArrayCustomer}
                   value={optionsArrayCustomer.find(
-                    (option) => option.value === items.productNameId
+                    (option) => option.value === items.customerName
                   )}
                   styles={{
                     input: (base) => ({
@@ -125,7 +139,7 @@ const SellForm = () => {
                   onChange={(selectedOption) =>
                     setItems((prev) => ({
                       ...prev,
-                      productNameId: selectedOption?.value || "",
+                      customerName: selectedOption?.value || "",
                     }))
                   }
                   className="basic-single"
@@ -301,11 +315,11 @@ const SellForm = () => {
                         </label>
                         <div className="mt-2">
                           <input
-                            id="customerName"
-                            name="customerName"
-                            value={items.customerName}
+                            id="discount"
+                            name="discount"
+                            value={items.discount}
                             onChange={handleInputChange}
-                            type="text"
+                            type="number"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm/6"
                           />
                         </div>
@@ -326,8 +340,8 @@ const SellForm = () => {
                             <option disabled selected>
                               Choose Discount Type
                             </option>
-                            <option value="US">Percentage %</option>
-                            <option value="CA">Fixed</option>
+                            <option value="percentage">Percentage %</option>
+                            <option value="fixed">Fixed</option>
                           </select>
                         </div>
                       </div>
@@ -378,7 +392,7 @@ const SellForm = () => {
                       <div className="mt-6 space-y-4">
                         <div className="flex justify-between text-gray-600">
                           <span>Subtotal</span>
-                          <span>{}</span>
+                          <span>{totalPriceSum}</span>
                         </div>
                         <div className="flex justify-between text-gray-600">
                           <span>Shipping</span>

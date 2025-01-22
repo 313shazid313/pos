@@ -75,10 +75,23 @@ const sellCreate = async (req, res) => {
 
 const readAllSell = async (req, res) => {
   try {
-    const sellData = await sellSchema.find().sort({ _id: -1 });
+    const sellData = await sellSchema
+      .find()
+      .sort({ _id: -1 })
+      .populate("customerName")
+      .populate("paymentType");
+
+    // Check if data exists
+    if (!sellData || sellData.length === 0) {
+      return res.status(404).json({ message: "No sell data found" });
+    }
+
     return res.status(200).json(sellData);
   } catch (error) {
-    return res.status(500).json({ message: "Sell Error" });
+    console.error("Error fetching sell data:", error); // Log the actual error for debugging
+    return res
+      .status(500)
+      .json({ message: "Sell Error", error: error.message });
   }
 };
 

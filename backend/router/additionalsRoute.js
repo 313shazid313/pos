@@ -79,6 +79,10 @@ const {
   applyCoupon,
 } = require("../controller/additionals-controller/coupon-controller");
 
+const {
+  sellCreate,
+  readAllSell,
+} = require("../controller/additionals-controller/sell-controller");
 
 additionalsRoute.route("/create-review").post(reviewCreate);
 additionalsRoute.route("/read-reviews").get(reviewRead);
@@ -129,7 +133,6 @@ additionalsRoute.route("/read-paymenttype").get(paymentTypeRead);
 additionalsRoute.route("/update-paymenttype/:id").put(paymentTypeUpdate);
 additionalsRoute.route("/single-paymenttype/:id").get(getSinglePaymentType);
 
-
 additionalsRoute.route("/create-coupon").post(createCoupon);
 additionalsRoute.route("/read-coupons").get(getAllCoupons);
 additionalsRoute.route("/single-coupon/:id").get(getCouponById);
@@ -137,4 +140,8 @@ additionalsRoute.route("/update-coupon/:id").put(updateCoupon);
 additionalsRoute.route("/delete-coupon/:id").delete(deleteCoupon);
 additionalsRoute.route("/apply-coupon/:couponCode").post(applyCoupon);
 
+additionalsRoute.route("/create-sell").post(sellCreate);
+additionalsRoute.route("/read-sell").get(readAllSell);
+
 module.exports = additionalsRoute;
+  

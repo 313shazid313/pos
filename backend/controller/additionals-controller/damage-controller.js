@@ -41,9 +41,7 @@ const damageCreate = async (req, res) => {
 
 const damageRead = async (req, res) => {
   try {
-    const showAll = await damageSchema
-      .find()
-      .sort({ _id: -1 });
+    const showAll = await damageSchema.find().sort({ _id: -1 });
     res.status(200).json(showAll);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });

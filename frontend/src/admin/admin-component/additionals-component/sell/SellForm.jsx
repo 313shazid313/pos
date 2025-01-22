@@ -5,6 +5,8 @@ import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockA
 import { useGetAllvatsQuery } from "../../../../redux/additionals-state/vatApi.js";
 import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/customerApi.js";
 import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/paymentTypeApi.js";
+import toast from "react-hot-toast";
+
 import { useNavigate } from "react-router-dom";
 
 const SellForm = () => {
@@ -28,9 +30,9 @@ const SellForm = () => {
   const { data: vatData } = useGetAllvatsQuery();
   const { data: customerData } = useGetAllCustomersQuery();
   const { data: paymentTypeData } = useGetAllPaymentTypeQuery();
-
+  console.log(stockData);
   const [tableData, setTableData] = useState([]);
-
+  console.log(tableData);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setItems((prev) => ({
@@ -179,12 +181,14 @@ const SellForm = () => {
 
   const optionsArrayProduct = [
     { label: "Select a Product", value: "", isDisabled: true },
-    ...(productData?.map((item) => ({
-      label: item.name,
-      value: item._id,
-      price: item.price,
+    ...(stockData?.map((item) => ({
+      label: item.productNameId.name,
+      value: item.productNameId._id,
+      price: item.productNameId.price,
     })) || []),
   ];
+  console.log(optionsArrayProduct);
+  console.log(stockData);
 
   const optionsArrayCustomer = [
     { label: "Select a Customer", value: "", isDisabled: true },
@@ -340,55 +344,70 @@ const SellForm = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {tableData.map((item) => (
-                  <tr key={item.productNameId}>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
+                {tableData.map((item) => {
+                  const stockItem = stockData.find(
+                    (stock) => stock.productNameId._id === item.productNameId
+                  );
+                  const isAddDisabled =
+                    stockItem && item.quantity >= stockItem.quantity;
+
+                  return (
+                    <tr key={item.productNameId}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {item.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleQuantityChange(item.productNameId, -1)
+                            }
+                            className="px-2 py-1 text-sm bg-gray-200 rounded"
+                          >
+                            -
+                          </button>
+                          <span>{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleQuantityChange(item.productNameId, 1)
+                            }
+                            className={`px-2 py-1 text-sm rounded ${
+                              isAddDisabled
+                                ? "bg-gray-300 cursor-not-allowed"
+                                : "bg-gray-200"
+                            }`}
+                            disabled={isAddDisabled}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        ${item.price.toFixed(2)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {(item.vat * 100).toFixed(0)}%
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        ${item.vatPerProduct.toFixed(2)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        ${item.totalPrice.toFixed(2)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           type="button"
-                          onClick={() =>
-                            handleQuantityChange(item.productNameId, -1)
-                          }
-                          className="px-2 py-1 text-sm bg-gray-200 rounded"
+                          onClick={() => handleRemoveItem(item.productNameId)}
+                          className="text-red-600 hover:text-red-900"
                         >
-                          -
+                          Remove
                         </button>
-                        <span>{item.quantity}</span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleQuantityChange(item.productNameId, 1)
-                          }
-                          className="px-2 py-1 text-sm bg-gray-200 rounded"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      ${item.price.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {(item.vat * 100).toFixed(0)}%
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      ${item.vatPerProduct.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      ${item.totalPrice.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveItem(item.productNameId)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

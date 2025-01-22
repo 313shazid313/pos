@@ -15,6 +15,7 @@ import customerApi from "./additionals-state/customerApi";
 import cartReducer from "./feature/sellCart";
 import vatApi from "./additionals-state/vatApi";
 import paymentTypeApi from "./additionals-state/paymentTypeApi";
+import sellApi from "./additionals-state/sellApi";
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     [customerApi.reducerPath]: customerApi.reducer,
     [vatApi.reducerPath]: vatApi.reducer,
     [paymentTypeApi.reducerPath]: paymentTypeApi.reducer,
+    [sellApi.reducerPath]: sellApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -51,6 +53,7 @@ export const store = configureStore({
       customerApi.middleware,
       vatApi.middleware,
       paymentTypeApi.middleware,
+      sellApi.middleware
     ),
 });
 

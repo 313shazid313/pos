@@ -1,6 +1,6 @@
-import { useGetAllProductsQuery } from "../../../../redux/rtk/productApi.js";
+// import { useGetAllProductsQuery } from "../../../../redux/rtk/productApi.js";
 import Select from "react-select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockApi.js";
 import { useGetAllvatsQuery } from "../../../../redux/additionals-state/vatApi.js";
 import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/customerApi.js";
@@ -9,7 +9,15 @@ import toast from "react-hot-toast";
 
 import { useNavigate } from "react-router-dom";
 
+import {
+  useCreateSellMutation,
+  useGetAllSellsQuery,
+} from "../../../../redux/additionals-state/sellApi.js";
+
 const SellForm = () => {
+  const { refetch } = useGetAllSellsQuery();
+  const [createSell] = useCreateSellMutation();
+
   const navigate = useNavigate();
   const [items, setItems] = useState({
     customerName: "",
@@ -25,14 +33,14 @@ const SellForm = () => {
 
   const [errors, setErrors] = useState({});
 
-  const { data: productData } = useGetAllProductsQuery();
+  // const { data: productData } = useGetAllProductsQuery();
   const { data: stockData } = useGetAllStocksQuery();
   const { data: vatData } = useGetAllvatsQuery();
   const { data: customerData } = useGetAllCustomersQuery();
   const { data: paymentTypeData } = useGetAllPaymentTypeQuery();
-  console.log(stockData);
+  // console.log(stockData);
   const [tableData, setTableData] = useState([]);
-  console.log(tableData);
+  // console.log(tableData);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setItems((prev) => ({
@@ -161,7 +169,7 @@ const SellForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -175,8 +183,17 @@ const SellForm = () => {
       ...totals,
     };
 
-    console.log("Submitting form data:", formData);
-    // Here you would typically make your API call to save the sale
+    // console.log("Submitting form data:", formData);
+
+    try {
+      await createSell(formData).unwrap();
+      refetch();
+      toast.success("Sell Created Successfully");
+      navigate(-1);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.data.message);
+    }
   };
 
   const optionsArrayProduct = [

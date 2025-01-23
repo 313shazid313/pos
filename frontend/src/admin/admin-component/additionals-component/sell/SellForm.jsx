@@ -284,7 +284,7 @@ const SellForm = () => {
                 type="text"
                 value={items.invoiceNo}
                 disabled
-                className="block w-full rounded-md border-gray-300 bg-gray-300 cursor-not-allowed shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="block w-full rounded-md border-gray-300 bg-gray-200 cursor-not-allowed shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
           </div>

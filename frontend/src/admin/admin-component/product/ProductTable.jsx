@@ -6,18 +6,11 @@ import {
   useSearchProductsQuery,
 } from "../../../redux/rtk/productApi";
 import { useGetAllStocksQuery } from "../../../redux/additionals-state/stockApi";
-import { initFlowbite } from "flowbite";
 
 //icons
 import { FaEdit } from "react-icons/fa";
-import { MdOutlineDescription } from "react-icons/md";
 
 const ProductTable = () => {
-  // Initialize Flowbite components
-  useEffect(() => {
-    initFlowbite();
-  }, []);
-
   const { data, isLoading, refetch } = useGetAllProductsQuery();
   const { data: stockData, refetch: stockRefetch } = useGetAllStocksQuery();
 
@@ -174,45 +167,6 @@ const ProductTable = () => {
                           <Link to={`product-update/${item.id}`}>
                             <FaEdit className="text-xl text-blue-500" />
                           </Link>
-                          {/* modals */}
-                          {/* <!-- Modal toggle --> */}
-                          <button
-                            data-modal-target="default-modal"
-                            data-modal-toggle="default-modal"
-                            type="button"
-                          >
-                            <MdOutlineDescription className="text-xl grey-blue-500" />
-                          </button>
-                          {/* <!-- Main modal --> */}
-                          <div
-                            id="default-modal"
-                            tabIndex="-1"
-                            aria-hidden="true"
-                            className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-                          >
-                            <div className="relative p-4 w-full max-w-2xl max-h-full">
-                              {/* Modal content */}
-                              <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                {/* Render raw HTML content */}
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: item.description,
-                                  }}
-                                ></div>
-
-                                {/* Modal footer */}
-                                <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                  <button
-                                    data-modal-hide="default-modal"
-                                    type="button"
-                                    className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
                           {/* modals */}
                         </div>
                       </td>

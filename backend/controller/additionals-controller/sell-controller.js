@@ -18,58 +18,57 @@ const sellCreate = async (req, res) => {
       vat,
     } = req.body;
 
-    const invoiceExist = await stockSchema.findOne({
-      invoiceNo: invoiceNo,
-    });
-
+    const invoiceExist = await stockSchema.findOne({ invoiceNo });
     if (invoiceExist) {
-      return res.status(401).json({
-        message: "This invoice number is already exists in the sell record.",
+      return res.status(400).json({
+        message: "This invoice number already exists in the sell record.",
       });
     }
 
+    const updatedProducts = [];
     for (const { productNameId, quantity } of products) {
-      try {
-        const stockItem = await stockSchema.findOne({ productNameId });
+      const stockItem = await stockSchema.findOne({ productNameId });
 
-        if (!stockItem) {
-          res.status(500).json({ message: "Item not found in Stock !" });
-          continue;
-        }
-
-        if (stockItem.quantity < quantity) {
-          res.status(500).json({ message: "Insufficient Quantity !" });
-          continue;
-        }
-
-        stockItem.quantity -= quantity;
-        await stockItem.save();
-
-        const sellRecord = await sellSchema.create({
-          products,
-          customerName,
-          invoiceNo,
-          date,
-          reference,
-          productNameId,
-          quantity,
-          discount,
-          discountType,
-          note,
-          paymentType,
-          subtotal,
-          total,
-          vat,
-        });
-
-        return res.status(200).json(sellRecord);
-      } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Sell Error1" });
+      if (!stockItem) {
+        await session.abortTransaction();
+        session.endSession();
+        return res
+          .status(404)
+          .json({ message: `Item ${productNameId} not found in stock!` });
       }
+
+      if (stockItem.quantity < quantity) {
+        return res.status(400).json({
+          message: `Insufficient stock for item ${productNameId}. Available: ${stockItem.quantity}`,
+        });
+      }
+
+      stockItem.quantity -= quantity;
+      await stockItem.save();
+      updatedProducts.push({ productNameId, quantity });
     }
+
+    const sellRecord = await sellSchema.create([
+      {
+        products: updatedProducts,
+        customerName,
+        invoiceNo,
+        date,
+        reference,
+        discount,
+        discountType,
+        note,
+        paymentType,
+        subtotal,
+        total,
+        vat,
+      },
+    ]);
+
+    return res.status(201).json(sellRecord);
   } catch (error) {
-    return res.status(500).json({ message: "Sell Error" });
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

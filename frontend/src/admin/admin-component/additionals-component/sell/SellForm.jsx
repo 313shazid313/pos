@@ -41,8 +41,21 @@ const SellForm = () => {
   // console.log(stockData);
   const [tableData, setTableData] = useState([]);
   // console.log(tableData);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Parse the current date and compare it properly
+    const today = new Date().toISOString().split("T")[0];
+
+    // Check if the field being updated is the date
+    if (name === "date") {
+      if (value < today) {
+        return toast.error("You are choosing a previous date");
+      }
+    }
+
+    // Update the state
     setItems((prev) => ({
       ...prev,
       [name]: value,
@@ -183,7 +196,7 @@ const SellForm = () => {
       ...totals,
     };
 
-    // console.log("Submitting form data:", formData);
+    console.log("Submitting form data:", formData);
 
     try {
       await createSell(formData).unwrap();
@@ -204,8 +217,8 @@ const SellForm = () => {
       price: item.productNameId.price,
     })) || []),
   ];
-  console.log(optionsArrayProduct);
-  console.log(stockData);
+  // console.log(optionsArrayProduct);
+  // console.log(stockData);
 
   const optionsArrayCustomer = [
     { label: "Select a Customer", value: "", isDisabled: true },
@@ -215,13 +228,13 @@ const SellForm = () => {
     })) || []),
   ];
 
-  const optionsArrayPaymentType = [
-    { label: "Select Payment Type", value: "", isDisabled: true },
-    ...(paymentTypeData?.map((item) => ({
-      label: item.name,
-      value: item._id,
-    })) || []),
-  ];
+  // const optionsArrayPaymentType = [
+  //   { label: "Select Payment Type", value: "", isDisabled: true },
+  //   ...(paymentTypeData?.map((item) => ({
+  //     label: item.name,
+  //     value: item._id,
+  //   })) || []),
+  // ];
 
   const totals = calculateTotals();
 
@@ -274,7 +287,7 @@ const SellForm = () => {
                 type="text"
                 value={items.invoiceNo}
                 disabled
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="block w-full rounded-md border-gray-300 bg-gray-300 cursor-not-allowed shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -433,39 +446,41 @@ const SellForm = () => {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-900">
-                    Discount
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      name="discount"
-                      type="number"
-                      value={items.discount}
-                      onChange={handleInputChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
+                <div className="flex space-x-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-900">
+                      Discount
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        name="discount"
+                        type="number"
+                        value={items.discount}
+                        onChange={handleInputChange}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    {errors.discount && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.discount}
+                      </p>
+                    )}
                   </div>
-                  {errors.discount && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.discount}
-                    </p>
-                  )}
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-900">
-                    Discount Type
-                  </label>
-                  <select
-                    name="discountType"
-                    value={items.discountType}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="percentage">Percentage %</option>
-                    <option value="fixed">Fixed Amount</option>
-                  </select>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-900">
+                      Discount Type
+                    </label>
+                    <select
+                      name="discountType"
+                      value={items.discountType}
+                      onChange={handleInputChange}
+                      className="mt-1 text-sm block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="percentage">Percentage (%)</option>
+                      <option value="fixed">Fixed Amount</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="sm:col-span-3">
@@ -483,7 +498,7 @@ const SellForm = () => {
                   ></textarea>
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-900">
                     Payment Type
                   </label>
@@ -509,6 +524,31 @@ const SellForm = () => {
                     className="basic-single"
                     classNamePrefix="select"
                   />
+                </div> */}
+
+                <div className="sm:col-span-3">
+                  <label className="block text-sm/6 font-medium text-gray-900">
+                    Product Origin
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      required
+                      name="originId"
+                      value={items.originId}
+                      onChange={handleInputChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600-600 sm:text-sm/6"
+                    >
+                      <option value="" disabled>
+                        -----Select Payment Type-----
+                      </option>
+                      {paymentTypeData &&
+                        paymentTypeData.map((Item) => (
+                          <option key={Item._id} value={Item._id}>
+                            {Item.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>

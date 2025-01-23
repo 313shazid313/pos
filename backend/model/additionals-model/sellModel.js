@@ -23,6 +23,7 @@ const sellSchema = new mongoose.Schema(
       {
         productNameId: { type: Schema.Types.ObjectId, ref: "Product" },
         quantity: { type: Number },
+        name: { type: String, required: true },
       },
     ],
     paymentType: {

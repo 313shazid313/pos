@@ -38,13 +38,17 @@ const sellApi = createApi({
     //   invalidatesTags: ["Sell"],
     // }),
 
-    // singleSell: builder.query({
-    //   query: (id) => `/single-Sell/${id}`,
-    //   providesTags: (result, error, id) => [{ type: "Sell", id }],
-    // }),
+    singleSell: builder.query({
+      query: (id) => `/single-Sell/${id}`,
+      providesTags: (result, error, id) => [{ type: "Sell", id }],
+    }),
   }),
 });
 
-export const { useCreateSellMutation, useGetAllSellsQuery } = sellApi;
+export const {
+  useCreateSellMutation,
+  useGetAllSellsQuery,
+  useSingleSellQuery,
+} = sellApi;
 
 export default sellApi;

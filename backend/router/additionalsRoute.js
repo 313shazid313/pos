@@ -145,5 +145,4 @@ additionalsRoute.route("/create-sell").post(sellCreate);
 additionalsRoute.route("/read-sell").get(readAllSell);
 additionalsRoute.route("/single-sell/:id").get(readSellById);
 
-module.exports = additionalsRoute;
-  
+module.exports = additionalsRoute;  

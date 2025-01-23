@@ -26,7 +26,7 @@ const sellCreate = async (req, res) => {
     }
 
     const updatedProducts = [];
-    for (const { productNameId, quantity } of products) {
+    for (const { productNameId, quantity, name } of products) {
       const stockItem = await stockSchema.findOne({ productNameId });
 
       if (!stockItem) {
@@ -34,18 +34,18 @@ const sellCreate = async (req, res) => {
         session.endSession();
         return res
           .status(404)
-          .json({ message: `Item ${productNameId} not found in stock!` });
+          .json({ message: `Item ${name} not found in stock!` });
       }
 
       if (stockItem.quantity < quantity) {
         return res.status(400).json({
-          message: `Insufficient stock for item ${productNameId}. Available: ${stockItem.quantity}`,
+          message: `Insufficient stock for item ${name}. Available: ${stockItem.quantity}`,
         });
       }
 
       stockItem.quantity -= quantity;
       await stockItem.save();
-      updatedProducts.push({ productNameId, quantity });
+      updatedProducts.push({ productNameId, quantity, name });
     }
 
     const sellRecord = await sellSchema.create([

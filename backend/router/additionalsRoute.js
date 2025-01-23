@@ -82,6 +82,7 @@ const {
 const {
   sellCreate,
   readAllSell,
+  readSellById
 } = require("../controller/additionals-controller/sell-controller");
 
 additionalsRoute.route("/create-review").post(reviewCreate);
@@ -142,6 +143,7 @@ additionalsRoute.route("/apply-coupon/:couponCode").post(applyCoupon);
 
 additionalsRoute.route("/create-sell").post(sellCreate);
 additionalsRoute.route("/read-sell").get(readAllSell);
+additionalsRoute.route("/single-sell/:id").get(readSellById);
 
 module.exports = additionalsRoute;
   

@@ -1,6 +1,10 @@
 import { useGetAllSellsQuery } from "../../../../redux/additionals-state/sellApi";
 import { Link } from "react-router-dom";
 
+// icons
+
+import { FaEye } from "react-icons/fa6";
+
 const SellTable = () => {
   let serial = 0;
   const { data: sellData } = useGetAllSellsQuery();
@@ -67,12 +71,11 @@ const SellTable = () => {
                 <td className="px-3 py-3">{item?.subtotal}</td>
                 <td className="px-3 py-3">{item?.total}</td>
                 <td className="px-3 py-3">{item?.invoiceNo}</td>
-                <td className="px-3 py-3">action</td>
-                {/* <td className="px-3 py-3">
-                  <Link to={`stock-update/${item._id}`}>
-                    <FaEdit className="text-xl text-blue-500" />
+                <td className="px-3 py-3">
+                  <Link to={`sell-details/${item._id}`}>
+                    <FaEye className="text-xl text-blue-500" />
                   </Link>
-                </td> */}
+                </td>
               </tr>
             ))}
           </tbody>

@@ -44,24 +44,21 @@ const SellForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Parse the current date and compare it properly
     const today = new Date().toISOString().split("T")[0];
-
-    // Check if the field being updated is the date
+  
     if (name === "date") {
+      // Correct date comparison
       if (value < today) {
-        return toast.error("You are choosing a previous date");
+        toast.error("You cannot choose a previous date");
+        return; // Important: prevents state update
       }
     }
-
-    // Update the state
+  
     setItems((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
   const calculateVatAmount = (price, quantity, vatRate) => {
     return price * quantity * vatRate;
   };

@@ -94,4 +94,26 @@ const readAllSell = async (req, res) => {
   }
 };
 
-module.exports = { sellCreate, readAllSell };
+const readSellById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sellData = await sellSchema
+      .findById(id)
+      .populate("customerName")
+      .populate("paymentType");
+
+    // Check if data exists
+    if (!sellData) {
+      return res.status(404).json({ message: "Sell data not found" });
+    }
+
+    return res.status(200).json(sellData);
+  } catch (error) {
+    console.error("Error fetching sell data:", error);
+    return res
+      .status(500)
+      .json({ message: "Sell Error", error: error.message });
+  }
+};
+
+module.exports = { sellCreate, readAllSell, readSellById };

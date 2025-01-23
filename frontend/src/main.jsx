@@ -44,6 +44,7 @@ import VatForm from "./admin/admin-component/additionals-component/vat/VatForm.j
 import PaymentTable from "./admin/admin-component/additionals-component/payment/PaymentTable.jsx";
 import PaymentForm from "./admin/admin-component/additionals-component/payment/PaymentForm.jsx";
 import PaymentUpdate from "./admin/admin-component/additionals-component/payment/PaymentUpdate.jsx";
+import SellDetails from "./admin/admin-component/additionals-component/sell/SellDetails.jsx";
 
 const router = createBrowserRouter([
   //! admin route
@@ -182,6 +183,10 @@ const router = createBrowserRouter([
       {
         path: "sell-table",
         element: <SellTable />,
+      },
+      {
+        path: "sell-table/sell-details/:id",
+        element: <SellDetails />,
       },
       {
         path: "sell-table/sell-form",

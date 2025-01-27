@@ -90,7 +90,6 @@ const SellForm = () => {
       }
     },
     onBlur: () => {
-      // Ensure phone number is in items state when input loses focus
       setItems((prev) => ({
         ...prev,
         customerPhone: value,
@@ -234,6 +233,7 @@ const SellForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // ! submitting sell data start----------------------------------------------->
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -264,7 +264,9 @@ const SellForm = () => {
       toast.error(error.data.message);
     }
   };
+  // ! submitting sell data end ----------------------------------------------->
 
+  //! options for products ---------------------------->
   const optionsArrayProduct = [
     { label: "Select a Product", value: "", isDisabled: true },
     ...(stockData?.map((item) => ({
@@ -273,8 +275,8 @@ const SellForm = () => {
       price: item.productNameId.price,
     })) || []),
   ];
-  // console.log(optionsArrayProduct);
   // console.log(stockData);
+  //! options for products ----------------------------->
 
   const totals = calculateTotals();
 

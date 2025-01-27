@@ -4,8 +4,12 @@ const { Schema } = require("mongoose");
 const sellSchema = new mongoose.Schema(
   {
     customerName: {
-      type: Schema.Types.ObjectId,
-      ref: "Customer",
+      type: String,
+      required: false,
+    },
+    customerPhone: {
+      type: Number,
+      required: true,
     },
     invoiceNo: {
       type: Number,

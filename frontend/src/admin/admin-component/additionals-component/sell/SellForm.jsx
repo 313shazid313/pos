@@ -6,7 +6,7 @@ import { useGetAllvatsQuery } from "../../../../redux/additionals-state/vatApi.j
 import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/customerApi.js";
 import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/paymentTypeApi.js";
 import toast from "react-hot-toast";
-
+import Autosuggest from "react-autosuggest";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -15,6 +15,41 @@ import {
 } from "../../../../redux/additionals-state/sellApi.js";
 
 const SellForm = () => {
+  // const { data: productData } = useGetAllProductsQuery();
+  const { data: stockData } = useGetAllStocksQuery();
+  const { data: vatData } = useGetAllvatsQuery();
+  const { data: customerData } = useGetAllCustomersQuery();
+  const { data: paymentTypeData } = useGetAllPaymentTypeQuery();
+
+  //! auto suggestion code ----------------------------------------->
+  const [value, setValue] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
+  const getSuggestions = (value) => {
+    const inputValue = value.trim().toLowerCase();
+    return inputValue === ""
+      ? []
+      : customerData.filter((data) =>
+          data.phone.toLowerCase().includes(inputValue)
+        );
+  };
+
+  const renderSuggestion = (suggestion) => (
+    <div className="px-2 py-2 w-96 hover:bg-gray-100">
+      {suggestion.name} (Phone : {suggestion.phone})
+    </div>
+  );
+
+  const inputProps = {
+    placeholder: "Enter Customer Phone No.",
+    value,
+    className: "w-full p-2 border rounded",
+    onChange: (_, { newValue }) => {
+      setValue(newValue);
+    },
+  };
+  //! auto suggestion code ----------------------------------------->
+
   const { refetch } = useGetAllSellsQuery();
   const [createSell] = useCreateSellMutation();
 
@@ -33,11 +68,6 @@ const SellForm = () => {
 
   const [errors, setErrors] = useState({});
 
-  // const { data: productData } = useGetAllProductsQuery();
-  const { data: stockData } = useGetAllStocksQuery();
-  const { data: vatData } = useGetAllvatsQuery();
-  const { data: customerData } = useGetAllCustomersQuery();
-  const { data: paymentTypeData } = useGetAllPaymentTypeQuery();
   // console.log(stockData);
   const [tableData, setTableData] = useState([]);
   // console.log(tableData);
@@ -240,8 +270,32 @@ const SellForm = () => {
       <h1 className="text-2xl font-bold mb-6 text-center">Add New Sale</h1>
       <form className="max-w-4xl mx-auto" onSubmit={handleSubmit}>
         <div className="space-y-6">
-          {/* Customer and Invoice Section */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {/* ----------------- auto suggestion ------------- */}
+            <div className="relative w-xs">
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Select Customer *
+              </label>
+              <Autosuggest
+                suggestions={suggestions}
+                onSuggestionsFetchRequested={({ value }) =>
+                  setSuggestions(getSuggestions(value))
+                }
+                onSuggestionsClearRequested={() => setSuggestions([])}
+                getSuggestionValue={(suggestion) => suggestion.name}
+                renderSuggestion={renderSuggestion}
+                inputProps={inputProps}
+                theme={{
+                  container: "relative",
+                  suggestionsContainer:
+                    "absolute top-full left-0 z-10 border rounded shadow-lg bg-white",
+                  suggestionsList: "max-h-60 overflow-y-auto",
+                  suggestion: "cursor-pointer",
+                  suggestionHighlighted: "bg-gray-200",
+                }}
+              />
+            </div>
+            {/* ----------------- auto suggestion ------------- */}
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-900">
                 Select Customer *

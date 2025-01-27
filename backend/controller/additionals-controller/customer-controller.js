@@ -3,6 +3,14 @@ const customerSchema = require("../../model/additionals-model/customerModel");
 const customerCreate = async (req, res) => {
   try {
     const { name, phone, email, address } = req.body;
+
+    const phoneExist = await customerSchema.findOne({ phone: phone });
+    if (phoneExist) {
+      return res.status(400).json({
+        message: "This phone number already exists.",
+      });
+    }
+
     await customerSchema.create({ name, phone, email, address });
     return res.status(200).json({ message: "message sent successfully" });
   } catch (error) {

@@ -71,7 +71,7 @@ const SellForm = () => {
     className: "w-full p-2 border rounded",
     onChange: (event, { newValue, method }) => {
       setValue(newValue);
-      
+
       setItems((prev) => ({
         ...prev,
         customerPhone: newValue,
@@ -250,19 +250,19 @@ const SellForm = () => {
 
     console.log("Submitting form data:", formData);
 
-    // try {
-    //   await createCustomer({
-    //     name: items.customerName,
-    //     phone: items.customerPhone,
-    //   }).unwrap();
-    //   await createSell(formData).unwrap();
-    //   refetch();
-    //   toast.success("Sell Created Successfully");
-    //   navigate(-1);
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error(error.data.message);
-    // }
+    try {
+      await createCustomer({
+        name: items.customerName,
+        phone: items.customerPhone,
+      }).unwrap();
+      await createSell(formData).unwrap();
+      refetch();
+      toast.success("Sell Created Successfully");
+      navigate(-1);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.data.message);
+    }
   };
 
   const optionsArrayProduct = [

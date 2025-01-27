@@ -5,6 +5,7 @@ import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockA
 import { useGetAllvatsQuery } from "../../../../redux/additionals-state/vatApi.js";
 import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/customerApi.js";
 import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/paymentTypeApi.js";
+import { useCreateCustomerMutation } from "../../../../redux/additionals-state/customerApi.js";
 import toast from "react-hot-toast";
 import Autosuggest from "react-autosuggest";
 import { useNavigate } from "react-router-dom";
@@ -15,13 +16,37 @@ import {
 } from "../../../../redux/additionals-state/sellApi.js";
 
 const SellForm = () => {
-  // const { data: productData } = useGetAllProductsQuery();
+  // ! fetching data ---------->
   const { data: stockData } = useGetAllStocksQuery();
   const { data: vatData } = useGetAllvatsQuery();
   const { data: customerData } = useGetAllCustomersQuery();
   const { data: paymentTypeData } = useGetAllPaymentTypeQuery();
+  const { refetch } = useGetAllSellsQuery();
+  const [createSell] = useCreateSellMutation();
+  const [createCustomer] = useCreateCustomerMutation();
 
-  //! auto suggestion code ----------------------------------------->
+  //! react router dom ----------->
+  const navigate = useNavigate();
+
+  //! Making Hooks ---------->
+  const [items, setItems] = useState({
+    customerName: "",
+    customerPhone: "",
+    invoiceNo: Date.now(),
+    reference: "",
+    date: new Date().toISOString().split("T")[0],
+    paymentType: "",
+    discount: "",
+    discountType: "percentage",
+    shipping: 4.99,
+    note: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  // ! hooks for product table ------------->
+  const [tableData, setTableData] = useState([]);
+
+  //! auto suggestion code start----------------------------------------->
   const [value, setValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
@@ -36,7 +61,7 @@ const SellForm = () => {
 
   const renderSuggestion = (suggestion) => (
     <div className="px-2 py-2 w-96 hover:bg-gray-100">
-      {suggestion.name} (Phone : {suggestion.phone})
+      {suggestion.phone} (Name : {suggestion.name})
     </div>
   );
 
@@ -44,44 +69,43 @@ const SellForm = () => {
     placeholder: "Enter Customer Phone No.",
     value,
     className: "w-full p-2 border rounded",
-    onChange: (_, { newValue }) => {
+    onChange: (event, { newValue, method }) => {
       setValue(newValue);
+      
+      setItems((prev) => ({
+        ...prev,
+        customerPhone: newValue,
+      }));
+
+      // If it's from suggestion, update customer name too
+      if (method === "click" || method === "enter") {
+        const customer = customerData?.find((c) => c.phone === newValue);
+        if (customer) {
+          setItems((prev) => ({
+            ...prev,
+            customerName: customer.name,
+            customerPhone: customer.phone,
+          }));
+        }
+      }
+    },
+    onBlur: () => {
+      // Ensure phone number is in items state when input loses focus
+      setItems((prev) => ({
+        ...prev,
+        customerPhone: value,
+      }));
     },
   };
-  //! auto suggestion code ----------------------------------------->
-
-  const { refetch } = useGetAllSellsQuery();
-  const [createSell] = useCreateSellMutation();
-
-  const navigate = useNavigate();
-  const [items, setItems] = useState({
-    customerName: "",
-    invoiceNo: Date.now(),
-    reference: "",
-    date: new Date().toISOString().split("T")[0],
-    paymentType: "",
-    discount: "",
-    discountType: "percentage",
-    shipping: 4.99,
-    note: "",
-  });
-
-  const [errors, setErrors] = useState({});
-
-  // console.log(stockData);
-  const [tableData, setTableData] = useState([]);
-  // console.log(tableData);
+  //! auto suggestion code ends----------------------------------------->
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const today = new Date().toISOString().split("T")[0];
 
-    if (name === "date") {
-      // Correct date comparison
-      if (value < today) {
-        toast.error("You cannot choose a previous date");
-        return; // Important: prevents state update
-      }
+    if (name === "date" && value < today) {
+      toast.error("You cannot choose a previous date");
+      return;
     }
 
     setItems((prev) => ({
@@ -89,6 +113,7 @@ const SellForm = () => {
       [name]: value,
     }));
   };
+
   const calculateVatAmount = (price, quantity, vatRate) => {
     return price * quantity * vatRate;
   };
@@ -225,15 +250,19 @@ const SellForm = () => {
 
     console.log("Submitting form data:", formData);
 
-    try {
-      await createSell(formData).unwrap();
-      refetch();
-      toast.success("Sell Created Successfully");
-      navigate(-1);
-    } catch (error) {
-      console.error(error);
-      toast.error(error.data.message);
-    }
+    // try {
+    //   await createCustomer({
+    //     name: items.customerName,
+    //     phone: items.customerPhone,
+    //   }).unwrap();
+    //   await createSell(formData).unwrap();
+    //   refetch();
+    //   toast.success("Sell Created Successfully");
+    //   navigate(-1);
+    // } catch (error) {
+    //   console.error(error);
+    //   toast.error(error.data.message);
+    // }
   };
 
   const optionsArrayProduct = [
@@ -247,22 +276,6 @@ const SellForm = () => {
   // console.log(optionsArrayProduct);
   // console.log(stockData);
 
-  const optionsArrayCustomer = [
-    { label: "Select a Customer", value: "", isDisabled: true },
-    ...(customerData?.map((item) => ({
-      label: item.name,
-      value: item._id,
-    })) || []),
-  ];
-
-  // const optionsArrayPaymentType = [
-  //   { label: "Select Payment Type", value: "", isDisabled: true },
-  //   ...(paymentTypeData?.map((item) => ({
-  //     label: item.name,
-  //     value: item._id,
-  //   })) || []),
-  // ];
-
   const totals = calculateTotals();
 
   return (
@@ -273,8 +286,8 @@ const SellForm = () => {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {/* ----------------- auto suggestion ------------- */}
             <div className="relative w-xs">
-              <label className="block mb-2 text-sm font-medium text-gray-900">
-                Select Customer *
+              <label className="block text-sm/6 font-medium text-gray-900">
+                Enter customer Phone *
               </label>
               <Autosuggest
                 suggestions={suggestions}
@@ -282,7 +295,7 @@ const SellForm = () => {
                   setSuggestions(getSuggestions(value))
                 }
                 onSuggestionsClearRequested={() => setSuggestions([])}
-                getSuggestionValue={(suggestion) => suggestion.name}
+                getSuggestionValue={(suggestion) => suggestion.phone}
                 renderSuggestion={renderSuggestion}
                 inputProps={inputProps}
                 theme={{
@@ -294,41 +307,26 @@ const SellForm = () => {
                   suggestionHighlighted: "bg-gray-200",
                 }}
               />
-            </div>
-            {/* ----------------- auto suggestion ------------- */}
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
-                Select Customer *
-              </label>
-              <Select
-                options={optionsArrayCustomer}
-                value={optionsArrayCustomer.find(
-                  (option) => option.value === items.customerName
-                )}
-                styles={{
-                  input: (base) => ({
-                    ...base,
-                    "input:focus": {
-                      boxShadow: "none",
-                    },
-                  }),
-                }}
-                onChange={(selectedOption) =>
-                  setItems((prev) => ({
-                    ...prev,
-                    customerName: selectedOption?.value || "",
-                  }))
-                }
-                className="basic-single"
-                classNamePrefix="select"
-              />
-              {errors.customerName && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.customerName}
+              {errors.customerPhone && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.customerPhone}
                 </p>
               )}
             </div>
+            {/* ----------------- auto suggestion ------------- */}
 
+            <div>
+              <label className="block text-sm/6 font-medium text-gray-900">
+                Customer Name
+              </label>
+              <input
+                name="customerName"
+                type="text"
+                value={items.customerName}
+                onChange={handleInputChange}
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
             <div>
               <label className="block text-sm/6 font-medium text-gray-900">
                 Invoice No.

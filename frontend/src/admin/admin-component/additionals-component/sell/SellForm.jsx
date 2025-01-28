@@ -1,4 +1,3 @@
-// import { useGetAllProductsQuery } from "../../../../redux/rtk/productApi.js";
 import Select from "react-select";
 import { useState } from "react";
 import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockApi.js";
@@ -250,7 +249,11 @@ const SellForm = () => {
 
     console.log("Submitting form data:", formData);
 
+    // ! new sell
     try {
+      // if(customerData.phone)
+
+
       await createCustomer({
         name: items.customerName,
         phone: items.customerPhone,
@@ -263,8 +266,10 @@ const SellForm = () => {
       console.error(error);
       toast.error(error.data.message);
     }
+
+
   };
-  // ! submitting sell data end ----------------------------------------------->
+  // ! submitting sell data end ------------------------------>
 
   //! options for products ---------------------------->
   const optionsArrayProduct = [

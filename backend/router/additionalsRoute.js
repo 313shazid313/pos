@@ -55,6 +55,7 @@ const {
   customerRead,
   customerUpdate,
   getSingleCustomer,
+  getCustomerByPhone,
 } = require("../controller/additionals-controller/customer-controller");
 
 const {
@@ -82,7 +83,7 @@ const {
 const {
   sellCreate,
   readAllSell,
-  readSellById
+  readSellById,
 } = require("../controller/additionals-controller/sell-controller");
 
 additionalsRoute.route("/create-review").post(reviewCreate);
@@ -124,6 +125,7 @@ additionalsRoute.route("/create-customer").post(customerCreate);
 additionalsRoute.route("/read-customers").get(customerRead);
 additionalsRoute.route("/update-customer/:id").put(customerUpdate);
 additionalsRoute.route("/single-customer/:id").get(getSingleCustomer);
+additionalsRoute.route("/customerbyphone/:phone").get(getCustomerByPhone);
 
 additionalsRoute.route("/create-vat").post(vatCreate);
 additionalsRoute.route("/read-vats").get(vatRead);
@@ -145,4 +147,4 @@ additionalsRoute.route("/create-sell").post(sellCreate);
 additionalsRoute.route("/read-sell").get(readAllSell);
 additionalsRoute.route("/single-sell/:id").get(readSellById);
 
-module.exports = additionalsRoute;  
+module.exports = additionalsRoute;

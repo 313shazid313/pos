@@ -60,9 +60,31 @@ const getSingleCustomer = async (req, res) => {
   }
 };
 
+const getCustomerByPhone = async (req, res) => {
+  try {
+    const { phone } = req.params;
+
+    if (!phone) {
+      return res.status(400).json({ message: "Phone number is required" });
+    }
+
+    const customer = await customerSchema.findOne({ phone }); 
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.status(200).json(customer);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   customerCreate,
   customerRead,
   customerUpdate,
   getSingleCustomer,
+  getCustomerByPhone,
 };

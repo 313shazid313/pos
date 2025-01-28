@@ -58,6 +58,10 @@ const sellSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    returned :{
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

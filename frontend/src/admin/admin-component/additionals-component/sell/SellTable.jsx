@@ -76,6 +76,11 @@ const SellTable = () => {
                     <FaEye className="text-xl text-blue-500" />
                   </Link>
                 </td>
+                <td className="px-3 py-3">
+                  <Link to={`sell-return/${item._id}`}>
+                    <FaEye className="text-xl text-blue-500" />
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

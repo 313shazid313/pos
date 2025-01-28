@@ -116,4 +116,14 @@ const readSellById = async (req, res) => {
   }
 };
 
-module.exports = { sellCreate, readAllSell, readSellById };
+
+const returnedButtonFunction = async ()=>{
+  try {
+    const { id } = req.params;
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+} 
+
+
+module.exports = { sellCreate, readAllSell, readSellById, returnedButtonFunction };

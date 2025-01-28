@@ -42,6 +42,11 @@ const customerApi = createApi({
       query: (id) => `/single-customer/${id}`,
       providesTags: (result, error, id) => [{ type: "Customer", id }],
     }),
+
+    singleCustomerByPhone: builder.query({
+      query: (phone) => `/customerbyphone/${phone}`,
+      providesTags: (result, error, id) => [{ type: "Customer", id }],
+    }),
   }),
 });
 
@@ -50,6 +55,7 @@ export const {
   useGetAllCustomersQuery,
   useSingleCustomerQuery,
   useUpdateCustomersMutation,
+  useSingleCustomerByPhoneQuery,
 } = customerApi;
 
 export default customerApi;

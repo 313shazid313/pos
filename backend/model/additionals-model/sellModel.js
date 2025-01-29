@@ -28,6 +28,10 @@ const sellSchema = new mongoose.Schema(
         productNameId: { type: Schema.Types.ObjectId, ref: "Product" },
         quantity: { type: Number },
         name: { type: String, required: true },
+        totalPrice: { type: Number },
+        vat: { type: Number },
+        vatPerProduct: { type: Number },
+        price: { type: Number },
       },
     ],
     paymentType: {
@@ -58,10 +62,10 @@ const sellSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    returned :{
+    returned: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamps: true }
 );

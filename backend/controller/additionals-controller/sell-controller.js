@@ -27,7 +27,7 @@ const sellCreate = async (req, res) => {
     }
 
     const updatedProducts = [];
-    for (const { productNameId, quantity, name } of products) {
+    for (const { productNameId, quantity, name, totalPrice, vat, vatPerProduct, price} of products) {
       const stockItem = await stockSchema.findOne({ productNameId });
 
       if (!stockItem) {
@@ -46,7 +46,7 @@ const sellCreate = async (req, res) => {
 
       stockItem.quantity -= quantity;
       await stockItem.save();
-      updatedProducts.push({ productNameId, quantity, name });
+      updatedProducts.push({ productNameId, quantity, name, totalPrice, vat, vatPerProduct, price });
     }
 
     const sellRecord = await sellSchema.create([

@@ -254,7 +254,7 @@ const SellForm = () => {
 
     console.log("Submitting form data:", formData);
 
-    // ! new sell
+    // ! new sell submit
     try {
       const customerData = {
         name: items?.customerName,

@@ -2,7 +2,10 @@ import Select from "react-select";
 import { useState } from "react";
 import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockApi.js";
 import { useGetAllvatsQuery } from "../../../../redux/additionals-state/vatApi.js";
-import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/customerApi.js";
+import {
+  useGetAllCustomersQuery,
+  useSingleCustomerByPhoneQuery,
+} from "../../../../redux/additionals-state/customerApi.js";
 import { useGetAllPaymentTypeQuery } from "../../../../redux/additionals-state/paymentTypeApi.js";
 import { useCreateCustomerMutation } from "../../../../redux/additionals-state/customerApi.js";
 import toast from "react-hot-toast";
@@ -233,6 +236,8 @@ const SellForm = () => {
   };
 
   // ! submitting sell data start----------------------------------------------->
+  // console.log(items?.customerPhone);
+  const { data } = useSingleCustomerByPhoneQuery(items?.customerPhone);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -251,13 +256,17 @@ const SellForm = () => {
 
     // ! new sell
     try {
-      // if(customerData.phone)
+      const customerData = {
+        name: items?.customerName,
+        phone: items?.customerPhone,
+      };
 
+      console.log(customerData);
 
-      await createCustomer({
-        name: items.customerName,
-        phone: items.customerPhone,
-      }).unwrap();
+      if (!data) {
+        await createCustomer(customerData).unwrap();
+      }
+
       await createSell(formData).unwrap();
       refetch();
       toast.success("Sell Created Successfully");
@@ -266,8 +275,6 @@ const SellForm = () => {
       console.error(error);
       toast.error(error.data.message);
     }
-
-
   };
   // ! submitting sell data end ------------------------------>
 

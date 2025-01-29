@@ -65,8 +65,8 @@ const SellTable = () => {
                 key={item._id}
               >
                 <td className="px-3 py-3">{(serial = serial + 1)}</td>
-                <td className="px-3 py-3">{item?.customerName?.name}</td>
-                <td className="px-3 py-3">{item?.customerName?.phone}</td>
+                <td className="px-3 py-3">{item?.customerName}</td>
+                <td className="px-3 py-3">{item?.customerPhone}</td>
                 <td className="px-3 py-3">{item?.date}</td>
                 <td className="px-3 py-3">{item?.subtotal}</td>
                 <td className="px-3 py-3">{item?.total}</td>

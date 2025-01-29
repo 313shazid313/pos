@@ -5,6 +5,7 @@ const sellCreate = async (req, res) => {
   try {
     const {
       customerName,
+      customerPhone,
       invoiceNo,
       date,
       reference,
@@ -52,6 +53,7 @@ const sellCreate = async (req, res) => {
       {
         products: updatedProducts,
         customerName,
+        customerPhone,
         invoiceNo,
         date,
         reference,
@@ -68,7 +70,7 @@ const sellCreate = async (req, res) => {
     return res.status(201).json(sellRecord);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Sell Creation failed" });
   }
 };
 

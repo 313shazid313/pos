@@ -32,11 +32,11 @@ const SellDetails = () => {
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
           <p>
             <span className="font-medium">Name:</span>{" "}
-            {sellData.customerName?.name}
+            {sellData?.customerName}
           </p>
           <p>
             <span className="font-medium">Phone:</span>{" "}
-            {sellData.customerName?.phone}
+            {sellData?.customerPhone}
           </p>
           <p>
             <span className="font-medium">Email:</span>{" "}

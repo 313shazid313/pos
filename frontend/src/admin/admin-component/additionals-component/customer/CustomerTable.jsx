@@ -3,15 +3,20 @@ import { useGetAllCustomersQuery } from "../../../../redux/additionals-state/cus
 import Loading from "../../../../component/Loading";
 //icons
 import { FaEdit } from "react-icons/fa";
+import { useEffect } from "react";
 
 const CustomerTable = () => {
   // eslint-disable-next-line no-unused-vars
-  const { data, isError, isLoading } = useGetAllCustomersQuery();
+  const { data, isError, isLoading, refetch } = useGetAllCustomersQuery();
 
   let serial = 0;
 
   console.log(data);
 
+  useEffect(() => {
+    refetch();
+  }, []); 
+  
   if (isLoading) return <Loading />;
 
   return (

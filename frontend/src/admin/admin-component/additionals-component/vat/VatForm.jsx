@@ -95,13 +95,13 @@ const VatForm = () => {
             </button>
           </div>
 
-          <p className="mt-4 text-sm text-gray-700">
+          <p className="mt-4 text-sm text-blue-700">
             {Array.isArray(vatData) && vatData[0]
               ? `Current VAT Amount is: ${vatData[0].vatAmount}`
               : "Loading or no VAT data available"}
           </p>
 
-          <div className="mt-4 text-sm text-gray-500">
+          <div className="mt-4 text-sm text-red-500">
             *Note: Changes will not be saved until the &quot;Save&quot; button is clicked.
           </div>
         </form>

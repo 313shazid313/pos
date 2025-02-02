@@ -1,3 +1,13 @@
+//! selected product imports
+import { useDispatch } from "react-redux";
+import {
+  addProduct,
+  removeProduct,
+  incrementProduct,
+  decrementProduct,
+} from "../../../../redux/feature/slectedProductSlice";
+
+//!
 import Select from "react-select";
 import { useState } from "react";
 import { useGetAllStocksQuery } from "../../../../redux/additionals-state/stockApi.js";
@@ -17,8 +27,13 @@ import {
   useGetAllSellsQuery,
 } from "../../../../redux/additionals-state/sellApi.js";
 
+import { useSelector } from "react-redux";
+
 const SellForm = () => {
+  const selectedProductData = useSelector((state) => state.slectedproducts);
+
   // ! fetching data ---------->
+  const dispatch = useDispatch();
   const { data: stockData } = useGetAllStocksQuery();
   const { data: vatData } = useGetAllvatsQuery();
   const { data: customerData } = useGetAllCustomersQuery();
@@ -29,6 +44,26 @@ const SellForm = () => {
 
   //! react router dom ----------->
   const navigate = useNavigate();
+
+  //! ----------------
+  // console.log({ selectedProducts: selectedProductData });
+
+  const selectedProductsWithadditionalData = selectedProductData.map(
+    (product) => ({
+      ...product,
+      originalQuantity: product.quantity,
+      vat: vatData[0]?.vatAmount / 100,
+      vatPerProduct:
+        product.quantity * product.price * (vatData[0]?.vatAmount / 100),
+      totalPrice:
+        product.price * product.quantity +
+        product.quantity * product.price * (vatData[0]?.vatAmount / 100),
+    })
+  );
+
+  // console.log(selectedProductsWithadditionalData);
+
+  //! ----------------
 
   //! Making Hooks ---------->
   const [items, setItems] = useState({
@@ -42,11 +77,29 @@ const SellForm = () => {
     discountType: "percentage",
     shipping: 4.99,
     note: "",
+    disCountPercentage: "",
   });
 
   const [errors, setErrors] = useState({});
-  // ! hooks for product table ------------->
-  const [tableData, setTableData] = useState([]);
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!items.customerName) {
+      newErrors.customerName = "Customer is required";
+    }
+
+    if (selectedProductsWithadditionalData.length === 0) {
+      newErrors.products = "At least one product is required";
+    }
+
+    if (items.discount && isNaN(items.discount)) {
+      newErrors.discount = "Discount must be a number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   //! auto suggestion code start----------------------------------------->
   const [value, setValue] = useState("");
@@ -68,20 +121,22 @@ const SellForm = () => {
   );
 
   const inputProps = {
-    placeholder: "Enter Customer Phone No.",
+    placeholder: "+8801XXXXXXXXX",
     value,
     className: "w-full p-2 border rounded",
     onChange: (event, { newValue, method }) => {
-      setValue(newValue);
+      // Allow only numbers
+      const numericValue = newValue.replace(/\D/g, ""); // Remove non-numeric characters
+      setValue(numericValue);
 
       setItems((prev) => ({
         ...prev,
-        customerPhone: newValue,
+        customerPhone: numericValue,
       }));
 
       // If it's from suggestion, update customer name too
       if (method === "click" || method === "enter") {
-        const customer = customerData?.find((c) => c.phone === newValue);
+        const customer = customerData?.find((c) => c.phone === numericValue);
         if (customer) {
           setItems((prev) => ({
             ...prev,
@@ -97,7 +152,9 @@ const SellForm = () => {
         customerPhone: value,
       }));
     },
+    inputMode: "numeric", // Mobile keyboard optimization
   };
+
   //! auto suggestion code ends----------------------------------------->
 
   const handleInputChange = (e) => {
@@ -115,77 +172,19 @@ const SellForm = () => {
     }));
   };
 
-  const calculateVatAmount = (price, quantity, vatRate) => {
-    return price * quantity * vatRate;
-  };
-
-  const calculateTotalPrice = (price, quantity, vatAmount) => {
-    return price * quantity + vatAmount;
-  };
-
   const handleSelectChange = (selectedOption) => {
-    if (!selectedOption) return;
-
-    // Check if the product is already in the table
-    if (tableData.some((item) => item.productNameId === selectedOption.value)) {
-      alert("This product is already in the cart!");
-      return;
-    }
-
-    const vatRate = vatData?.[0]?.vatAmount ? vatData[0].vatAmount / 100 : 0;
-    const quantity = 1;
-    const price = selectedOption.price;
-    const vatAmount = calculateVatAmount(price, quantity, vatRate);
-    const totalPrice = calculateTotalPrice(price, quantity, vatAmount);
-
-    setTableData([
-      ...tableData,
-      {
-        productNameId: selectedOption.value,
-        name: selectedOption.label,
-        price,
-        quantity,
-        vat: vatRate,
-        vatPerProduct: vatAmount,
-        totalPrice,
-      },
-    ]);
+    dispatch(addProduct(selectedOption));
   };
 
-  // console.log(tableData);
-
-  const handleQuantityChange = (productNameId, increment) => {
-    setTableData((prevTableData) =>
-      prevTableData.map((item) => {
-        if (item.productNameId === productNameId) {
-          const newQuantity = Math.max(1, item.quantity + increment);
-          const vatAmount = calculateVatAmount(
-            item.price,
-            newQuantity,
-            item.vat
-          );
-          const totalPrice = calculateTotalPrice(
-            item.price,
-            newQuantity,
-            vatAmount
-          );
-
-          return {
-            ...item,
-            quantity: newQuantity,
-            vatPerProduct: vatAmount,
-            totalPrice,
-          };
-        }
-        return item;
-      })
-    );
+  const handleQuantityIncrese = (id) => {
+    dispatch(incrementProduct(id));
+  };
+  const handleQuantityDecrese = (id) => {
+    dispatch(decrementProduct(id));
   };
 
-  const handleRemoveItem = (productNameId) => {
-    setTableData((prevTableData) =>
-      prevTableData.filter((item) => item.productNameId !== productNameId)
-    );
+  const handleRemoveItem = (value) => {
+    dispatch(removeProduct(value));
   };
 
   const calculateDiscountAmount = (subtotal) => {
@@ -198,45 +197,28 @@ const SellForm = () => {
   };
 
   const calculateTotals = () => {
-    const subtotal = tableData.reduce((acc, item) => acc + item.totalPrice, 0);
+    const subtotal = selectedProductsWithadditionalData.reduce(
+      (acc, item) => acc + item.totalPrice,
+      0
+    );
     const discountAmount = calculateDiscountAmount(subtotal);
-    const shipping = parseFloat(items.shipping);
-    const totalVat = tableData.reduce(
+    const totalVat = selectedProductsWithadditionalData.reduce(
       (acc, item) => acc + item.vatPerProduct,
       0
     );
-    const grandTotal = subtotal - discountAmount + shipping;
-
+    const grandTotal = subtotal - discountAmount;
     return {
       subtotal: subtotal.toFixed(2),
       discount: discountAmount.toFixed(2),
-      shipping: shipping.toFixed(2),
       vat: totalVat.toFixed(2),
       total: grandTotal.toFixed(2),
+      disCountPercentage:
+        items.discountType === "percentage" ? items.discount : null, // Use a ternary operator
     };
   };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!items.customerName) {
-      newErrors.customerName = "Customer is required";
-    }
-
-    if (tableData.length === 0) {
-      newErrors.products = "At least one product is required";
-    }
-
-    if (items.discount && isNaN(items.discount)) {
-      newErrors.discount = "Discount must be a number";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const totals = calculateTotals();
 
   // ! submitting sell data start----------------------------------------------->
-  // console.log(items?.customerPhone);
   const { data } = useSingleCustomerByPhoneQuery(items?.customerPhone);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -247,7 +229,7 @@ const SellForm = () => {
 
     const totals = calculateTotals();
     const formData = {
-      products: tableData,
+      products: selectedProductsWithadditionalData,
       ...items,
       ...totals,
     };
@@ -261,7 +243,7 @@ const SellForm = () => {
         phone: items?.customerPhone,
       };
 
-      console.log(customerData);
+      // console.log(customerData);
 
       if (!data) {
         await createCustomer(customerData).unwrap();
@@ -287,10 +269,8 @@ const SellForm = () => {
       price: item.productNameId.price,
     })) || []),
   ];
-  // console.log(stockData);
-  //! options for products ----------------------------->
 
-  const totals = calculateTotals();
+  //! options for products ----------------------------->
 
   return (
     <div className="p-6">
@@ -301,7 +281,7 @@ const SellForm = () => {
             {/* ----------------- auto suggestion ------------- */}
             <div className="relative w-xs">
               <label className="block text-sm/6 font-medium text-gray-900">
-                Enter customer Phone *
+                Customer Phone *
               </label>
               <Autosuggest
                 suggestions={suggestions}
@@ -335,6 +315,7 @@ const SellForm = () => {
               </label>
               <input
                 name="customerName"
+                placeholder="Enter Customer Name"
                 type="text"
                 value={items.customerName}
                 onChange={handleInputChange}
@@ -437,25 +418,22 @@ const SellForm = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {tableData.map((item) => {
+                {selectedProductsWithadditionalData?.map((item) => {
                   const stockItem = stockData.find(
-                    (stock) => stock.productNameId._id === item.productNameId
+                    (stock) => stock.productNameId._id === item.value
                   );
                   const isAddDisabled =
                     stockItem && item.quantity >= stockItem.quantity;
-
                   return (
-                    <tr key={item.productNameId}>
+                    <tr key={item.value}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {item.name}
+                        {item.label}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
                           <button
                             type="button"
-                            onClick={() =>
-                              handleQuantityChange(item.productNameId, -1)
-                            }
+                            onClick={() => handleQuantityDecrese(item.value)}
                             className="px-2 py-1 text-sm bg-gray-200 rounded"
                           >
                             -
@@ -463,12 +441,10 @@ const SellForm = () => {
                           <span>{item.quantity}</span>
                           <button
                             type="button"
-                            onClick={() =>
-                              handleQuantityChange(item.productNameId, 1)
-                            }
+                            onClick={() => handleQuantityIncrese(item.value)}
                             className={`px-2 py-1 text-sm rounded ${
                               isAddDisabled
-                                ? "bg-gray-300 cursor-not-allowed"
+                                ? "bg-gray-400 cursor-not-allowed"
                                 : "bg-gray-200"
                             }`}
                             disabled={isAddDisabled}
@@ -492,7 +468,7 @@ const SellForm = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           type="button"
-                          onClick={() => handleRemoveItem(item.productNameId)}
+                          onClick={() => handleRemoveItem(item.value)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Remove
@@ -630,10 +606,10 @@ const SellForm = () => {
                     <span>Discount</span>
                     <span>-${totals.discount}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-600">
+                  {/* <div className="flex justify-between text-sm text-gray-600">
                     <span>Shipping</span>
                     <span>${totals.shipping}</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>VAT</span>
                     <span>${totals.vat}</span>
@@ -649,10 +625,9 @@ const SellForm = () => {
             </div>
           </div>
         </div>
-
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
-            type="button"
+            type="submit"
             onClick={() => navigate(-1)}
             className="text-sm/6 font-semibold text-gray-900"
           >

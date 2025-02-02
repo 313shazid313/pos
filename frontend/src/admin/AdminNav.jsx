@@ -90,15 +90,45 @@ const AdminNav = () => {
               </a>
             </li>
             <li>
-              <NavLink
-                exact="true"
-                to="sell-table"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 group"
+              <button
+                type="button"
+                className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+                aria-controls="dropdown0"
+                data-collapse-toggle="dropdown0"
               >
                 <FaMoneyBill className="text-xl" />
-                <span className="ms-3">Sell</span>
-              </NavLink>
+                <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
+                  Manage Sell
+                </span>
+                <svg
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m1 1 4 4 4-4"
+                  />
+                </svg>
+              </button>
+              <ul id="dropdown0" className="hidden py-2 space-y-2">
+                <li>
+                  <NavLink
+                    exact="true"
+                    to="sell-table"
+                    className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+                  >
+                    Sell List
+                  </NavLink>
+                </li>
+              </ul>
             </li>
+
             <li>
               <button
                 type="button"

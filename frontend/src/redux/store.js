@@ -16,9 +16,14 @@ import cartReducer from "./feature/sellCart";
 import vatApi from "./additionals-state/vatApi";
 import paymentTypeApi from "./additionals-state/paymentTypeApi";
 import sellApi from "./additionals-state/sellApi";
+import selectedProductReducer from "../redux/feature/slectedProductSlice";
+import returnSelectedProductReducer from "../redux/feature/returnSelectedProductSlice";
 
+// Defining root reducer here, combining all the reducers.
 export const store = configureStore({
   reducer: {
+    slectedproducts: selectedProductReducer,
+    returnselectedproducts: returnSelectedProductReducer,
     cart: cartReducer,
     [authApi.reducerPath]: authApi.reducer,
     auth: authReducer,

@@ -17,6 +17,7 @@ const sellCreate = async (req, res) => {
       subtotal,
       total,
       vat,
+      disCountPercentage
     } = req.body;
 
     const invoiceExist = await stockSchema.findOne({ invoiceNo });
@@ -27,26 +28,26 @@ const sellCreate = async (req, res) => {
     }
 
     const updatedProducts = [];
-    for (const { productNameId, quantity, name, totalPrice, vat, vatPerProduct, price} of products) {
-      const stockItem = await stockSchema.findOne({ productNameId });
+    for (const { value, quantity, label, totalPrice, vat, vatPerProduct, price, originalQuantity} of products) {
+      const stockItem = await stockSchema.findOne({productNameId: value });
+
+      console.log(value)
 
       if (!stockItem) {
-        await session.abortTransaction();
-        session.endSession();
         return res
           .status(404)
-          .json({ message: `Item ${name} not found in stock!` });
+          .json({ message: `Item ${label} not found in stock!` });
       }
 
       if (stockItem.quantity < quantity) {
         return res.status(400).json({
-          message: `Insufficient stock for item ${name}. Available: ${stockItem.quantity}`,
+          message: `Insufficient stock for item ${label}. Available: ${stockItem.quantity}`,
         });
       }
 
       stockItem.quantity -= quantity;
       await stockItem.save();
-      updatedProducts.push({ productNameId, quantity, name, totalPrice, vat, vatPerProduct, price });
+      updatedProducts.push({ value, quantity, label, totalPrice, vat, vatPerProduct, price , originalQuantity});
     }
 
     const sellRecord = await sellSchema.create([
@@ -64,6 +65,7 @@ const sellCreate = async (req, res) => {
         subtotal,
         total,
         vat,
+        disCountPercentage
       },
     ]);
 

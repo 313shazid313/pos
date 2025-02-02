@@ -1,14 +1,17 @@
 import { useGetAllSellsQuery } from "../../../../redux/additionals-state/sellApi";
 import { Link } from "react-router-dom";
-
+import Loading from "../../../../component/Loading";
+import { PiKeyReturnBold } from "react-icons/pi";
 // icons
 
 import { FaEye } from "react-icons/fa6";
 
 const SellTable = () => {
   let serial = 0;
-  const { data: sellData } = useGetAllSellsQuery();
+  const { data: sellData, isLoading } = useGetAllSellsQuery();
   console.log(sellData);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div>
@@ -41,9 +44,9 @@ const SellTable = () => {
               <th scope="col" className="px-3 py-3">
                 Phone
               </th>
-              <th scope="col" className="px-3 py-3">
+              {/* <th scope="col" className="px-3 py-3">
                 date
-              </th>
+              </th> */}
               <th scope="col" className="px-3 py-3">
                 Sub Total
               </th>
@@ -67,18 +70,16 @@ const SellTable = () => {
                 <td className="px-3 py-3">{(serial = serial + 1)}</td>
                 <td className="px-3 py-3">{item?.customerName}</td>
                 <td className="px-3 py-3">{item?.customerPhone}</td>
-                <td className="px-3 py-3">{item?.date}</td>
+                {/* <td className="px-3 py-3">{item?.date}</td> */}
                 <td className="px-3 py-3">{item?.subtotal}</td>
                 <td className="px-3 py-3">{item?.total}</td>
                 <td className="px-3 py-3">{item?.invoiceNo}</td>
-                <td className="px-3 py-3">
+                <td className="px-3 py-3 flex items-center gap-3">
                   <Link to={`sell-details/${item._id}`}>
                     <FaEye className="text-xl text-blue-500" />
                   </Link>
-                </td>
-                <td className="px-3 py-3">
                   <Link to={`sell-return/${item._id}`}>
-                    <FaEye className="text-xl text-blue-500" />
+                    <PiKeyReturnBold className="text-xl text-blue-500" />
                   </Link>
                 </td>
               </tr>

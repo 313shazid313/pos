@@ -25,13 +25,14 @@ const sellSchema = new mongoose.Schema(
     },
     products: [
       {
-        productNameId: { type: Schema.Types.ObjectId, ref: "Product" },
+        value: { type: Schema.Types.ObjectId, ref: "Product" },
         quantity: { type: Number },
-        name: { type: String, required: true },
+        label: { type: String, required: true },
         totalPrice: { type: Number },
         vat: { type: Number },
         vatPerProduct: { type: Number },
         price: { type: Number },
+        originalQuantity: { type: Number },
       },
     ],
     paymentType: {
@@ -65,6 +66,11 @@ const sellSchema = new mongoose.Schema(
     returned: {
       type: Boolean,
       default: false,
+    },
+    disCountPercentage: {
+      type: Number,
+      required: false,
+      default: 0,
     },
   },
   { timestamps: true }
